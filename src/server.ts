@@ -6,6 +6,7 @@ app.listen(3333, () => {
   console.log(`
   _______________________
 
+  🐺 🤟
   Server is Up!
   @TheyCallMeWolf
 
