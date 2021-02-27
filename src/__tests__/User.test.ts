@@ -14,7 +14,17 @@ describe('Users', () => {
       email: 'fake-user@theycallmewolf.com',
       name: 'fake-user',
     })
-
+    
     expect(response.status).toBe(201);
+  })
+  
+  it('should not be able to create a new user with already existing email', async () => {
+    const response = await request(app).post('/users')
+    .send({
+      email: 'fake-user@theycallmewolf.com',
+      name: 'fake-user',
+    })
+    
+    expect(response.status).toBe(400);
   })
 })
