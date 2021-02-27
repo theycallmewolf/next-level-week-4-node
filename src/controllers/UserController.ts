@@ -1,13 +1,13 @@
-import {Request, Response } from 'express';
-import { getRepository, RepositoryNotTreeError } from 'typeorm';
-import { User } from '../database/models/User';
+import { Request, Response } from 'express';
+import { getCustomRepository } from 'typeorm';
+import { UsersRepository } from '../repositories/UsersRepository';
 
 class UserController {
   async create(request: Request, response: Response) {
     const { name, email } = request.body;
     
     // repository -> entity manager (link to db)
-    const usersRepository = getRepository(User);
+    const usersRepository = getCustomRepository(UsersRepository);
     
     // step 1 - check if user already exists
     const userAlreadyExists = await usersRepository.findOne({email})
