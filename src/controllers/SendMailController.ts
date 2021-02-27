@@ -1,3 +1,4 @@
+import path from 'path';
 import { Request, Response } from "express";
 import { getCustomRepository } from "typeorm";
 import { SurveysRepository } from "../repositories/SurveysRepository";
@@ -14,9 +15,9 @@ class SendMailController {
     const surveysRepository = getCustomRepository(SurveysRepository);
     const surveysUsersRepository = getCustomRepository(SurveysUsersRepository);
 
-    const userAlreadyExists = await usersRepository.findOne({ email });
+    const user = await usersRepository.findOne({ email });
 
-    if(!userAlreadyExists) {
+    if(!user) {
       return response.status(400).json({
         error: 'user does not exists',
       })
@@ -31,13 +32,19 @@ class SendMailController {
     }
 
     const surveyUser = surveysUsersRepository.create({
-      user_id: userAlreadyExists.id,
+      user_id: user.id,
       survey_id,
     })
 
-    await SendMailService.execute(email, survey.title, survey.description);
-
     await surveysUsersRepository.save(surveyUser);
+    
+    const npsPath = path.resolve(__dirname, '..', 'views', 'emails', 'npsMail.hbs');
+    const variables = {
+      name: user.name,
+      title: survey.title,
+      description: survey.description,
+    }
+    await SendMailService.execute(email, survey.title, variables, npsPath);
 
     return response.status(200).json(surveyUser);
   }
